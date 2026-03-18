@@ -1,0 +1,38 @@
+const int soilPin = 6;   
+const int relayPin = 3;  
+
+const unsigned long pumpDuration = 2000; 
+bool pumpActive = false;
+unsigned long pumpStartTime = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(soilPin, INPUT);
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH); 
+}
+
+void loop() {
+  int soilValue = digitalRead(soilPin);
+  float temp = digitalRead(soilPin);
+  unsigned long currentTime = millis();
+
+  
+  bool wetSoil = (soilValue == 1);
+
+  if (wetSoil && !pumpActive) {
+    digitalWrite(relayPin, LOW); 
+    pumpStartTime = currentTime;
+    pumpActive = true;
+    Serial.println("PUMPA VKLUCENA - VLAZNA POCHVA");
+  }
+
+  if (pumpActive && (currentTime - pumpStartTime >= pumpDuration)) {
+    digitalWrite(relayPin, HIGH); 
+    pumpActive = false;
+    Serial.println("PUMPA ISKLUCENA - PULS GOTOVO");
+  }
+
+Serial.println(temp);
+  delay(50); 
+}
